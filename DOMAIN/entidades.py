@@ -65,3 +65,80 @@ class SalidaInventario(MovimientoInventario):
 
         inventario.cantidad_disponible -= self.cantidad_movida
         return inventario
+    
+class DetallePedido:
+    def __init__(self, id_ingrediente, cantidad_pedido):
+        if cantidad_pedido <= 0:
+            raise ValueError("La cantidad del pedido debe ser mayor a cero.")
+
+        self.id_ingrediente = id_ingrediente
+        self.cantidad_pedido = cantidad_pedido
+
+    def convertir_a_diccionario(self):
+        return {
+            "id_ingrediente": self.id_ingrediente,
+            "cantidad_pedido": self.cantidad_pedido
+        }
+
+class Pedido:
+    def __init__(self, id_pedido, id_proveedor, id_sucursal, fecha, estado):
+        self.id_pedido = id_pedido
+        self.id_proveedor = id_proveedor
+        self.id_sucursal = id_sucursal
+        self.fecha = fecha
+        self.estado = estado
+        self._detalles = []
+
+    @property
+    def detalles(self):
+        return tuple(self._detalles)
+
+    def agregar_detalle(self, detalle):
+        self._detalles.append(detalle)
+
+    def validar_pedido(self):
+        if len(self._detalles) == 0:
+            raise ValueError("Un pedido debe contener al menos un detalle.")
+
+    def convertir_a_diccionario(self):
+        return {
+            "id_pedido": self.id_pedido,
+            "id_proveedor": self.id_proveedor,
+            "id_sucursal": self.id_sucursal,
+            "fecha": self.fecha,
+            "estado": self.estado,
+            "detalles": [detalle.convertir_a_diccionario() for detalle in self._detalles]
+        }
+
+class Plato:
+    def __init__(self, id_plato, nombre, descripcion, precio):
+        if precio <= 0:
+            raise ValueError("El precio del plato debe ser mayor a cero.")
+
+        self.id_plato = id_plato
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.precio = precio
+
+class Receta:
+    def __init__(self, id_receta, id_plato):
+        self.id_receta = id_receta
+        self.id_plato = id_plato
+        self._ingredientes = []
+
+    @property
+    def ingredientes(self):
+        return tuple(self._ingredientes)
+
+    def agregar_ingrediente(self, id_ingrediente, cantidad_ingrediente):
+        if cantidad_ingrediente <= 0:
+            raise ValueError("La cantidad del ingrediente debe ser mayor a cero.")
+
+        self._ingredientes.append({
+            "id_ingrediente": id_ingrediente,
+            "cantidad_ingrediente": cantidad_ingrediente
+        })
+
+    def validar_receta(self):
+        if len(self._ingredientes) == 0:
+            raise ValueError("Una receta debe tener al menos un ingrediente.")
