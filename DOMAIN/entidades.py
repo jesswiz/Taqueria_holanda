@@ -6,7 +6,6 @@ class Ingrediente:
         self.nombre = nombre
         self.unidad_medida = unidad_medida
 
-
 class Proveedor:
     def __init__(self, id_proveedor, nombre, telefono, direccion, DUI_nit):
         self.id_proveedor = id_proveedor
@@ -14,7 +13,6 @@ class Proveedor:
         self.telefono = telefono
         self.direccion = direccion
         self.DUI_nit = DUI_nit
-
 
 class Sucursal:
     def __init__(self, id_sucursal, nombre, direccion, ciudad, departamento, telefono):
@@ -24,7 +22,6 @@ class Sucursal:
         self.ciudad = ciudad
         self.departamento = departamento
         self.telefono = telefono
-
 
 class Inventario:
     def __init__(self, id_inventario, id_sucursal, id_ingrediente, cantidad_disponible):
@@ -60,7 +57,6 @@ class EntradaInventario(MovimientoInventario):
     def aplicar_movimiento(self, inventario):
         inventario.cantidad_disponible += self.cantidad_movida
         return inventario
-
 
 class SalidaInventario(MovimientoInventario):
     def aplicar_movimiento(self, inventario):
