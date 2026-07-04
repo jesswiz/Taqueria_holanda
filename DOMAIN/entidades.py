@@ -203,6 +203,9 @@ class Pedido:
         return tuple(self._detalles)
 
     def agregar_detalle(self, detalle):
+        if not isinstance(detalle, DetallePedido):
+            raise ValueError("Solo se pueden agregar objetos DetallePedido.")
+            
         self._detalles.append(detalle)
 
     def validar_pedido(self):
