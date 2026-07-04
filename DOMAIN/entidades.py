@@ -184,8 +184,8 @@ class DetallePedido:
 
     def convertir_a_diccionario(self):
         return {
+            "id_detalle": self.id_detalle,
             "id_ingrediente": self.id_ingrediente,
-            "cantidad_pedido": self.cantidad_pedido,
             "cantidad_pedido": self.cantidad_pedido
         }
 
