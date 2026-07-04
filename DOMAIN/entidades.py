@@ -71,13 +71,27 @@ class Sucursal:
 
 class Inventario:
     def __init__(self, id_inventario, id_sucursal, id_ingrediente, cantidad_disponible):
+        if id_inventario is None:
+            raise ValueError("El inventario debe tener un id.")
+
+        if id_sucursal is None:
+            raise ValueError("El inventario debe estar asociado a una sucursal.")
+
+        if id_ingrediente is None:
+            raise ValueError("El inventario debe estar asociado a un ingrediente.")
+
+        if cantidad_disponible < 0:
+            raise ValueError("La cantidad disponible no puede ser negativa.")
+        
         self.id_inventario = id_inventario
         self.id_sucursal = id_sucursal
         self.id_ingrediente = id_ingrediente
         self.cantidad_disponible = cantidad_disponible
+        self._movimientos = []
 
-        if self.cantidad_disponible < 0:
-            raise ValueError("La cantidad disponible no puede ser negativa.")
+    @property
+    def movimientos(self):
+        return tuple(self._movimientos)
 
     def aumentar_cantidad(self, cantidad):
         if cantidad <= 0:
@@ -97,6 +111,8 @@ class Inventario:
     def hay_suficiente(self, cantidad):
         return self.cantidad_disponible >= cantidad
 
+    def registrar_movimiento(self, movimiento):
+        self._movimientos.append(movimiento)
 
     def convertir_a_diccionario(self):
         return {
@@ -135,7 +151,16 @@ class MovimientoInventario:
         elif self.tipo_accion == "salida":
             inventario.disminuir_cantidad(self.cantidad_movida)
 
+        inventario.registrar_movimiento(self)
         return inventario
+    
+    def convertir_a_diccionario(self):
+        return {
+            "tipo_accion": self.tipo_accion,
+            "cantidad_movida": self.cantidad_movida,
+            "fecha_accion": self.fecha_accion,
+            "motivo": self.motivo
+        }
     
 class DetallePedido:
     def __init__(self, id_detalle, id_ingrediente, cantidad_pedido):
@@ -143,7 +168,7 @@ class DetallePedido:
         self.id_detalle = id_detalle
         self.id_ingrediente = id_ingrediente
         self.cantidad_pedido = cantidad_pedido
-        self.validad_cantidad()
+        self.validar_cantidad()
 
     def validar_cantidad(self):
         if self.id_detalle is None:
@@ -242,6 +267,15 @@ class DetalleReceta:
     
 class Plato:
     def __init__(self, id_plato, nombre, descripcion, precio):
+        if id_plato is None:
+            raise ValueError("El plato debe tener un id.")
+
+        if nombre == "":
+            raise ValueError("El plato debe tener nombre.")
+
+        if descripcion == "":
+            raise ValueError("El plato debe tener descripción.")
+        
         if precio <= 0:
             raise ValueError("El precio del plato debe ser mayor a cero.")
 
@@ -249,7 +283,7 @@ class Plato:
         self.nombre = nombre
         self.descripcion = descripcion
         self.precio = precio
-        self.receta = []
+        self._receta = []
 
         if self.id_plato is None:
             raise ValueError("El plato debe tener un id.")
@@ -263,14 +297,18 @@ class Plato:
         if self.precio <= 0:
             raise ValueError("El precio del plato debe ser mayor a cero.")
 
+    @property
+    def receta(self):
+        return tuple(self._receta)
+    
     def agregar_ingrediente(self, detalle_receta):
         if not isinstance(detalle_receta, DetalleReceta):
             raise ValueError("Solo se pueden agregar objetos DetalleReceta.")
 
-        self.receta.append(detalle_receta)
+        self._receta.append(detalle_receta)
 
     def validar_receta(self):
-        if len(self.receta) == 0:
+        if len(self._receta) == 0:
             raise ValueError("El plato debe tener al menos un ingrediente en su receta.")
 
     def convertir_a_diccionario(self):
