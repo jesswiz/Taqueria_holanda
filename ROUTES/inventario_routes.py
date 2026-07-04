@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from DATA.inventario_repository import InventarioRepository
 from DOMAIN.servicio_inventario import ServicioInventario
 
-inventario_bp = Blueprint("inventario_bp", _name_)
+inventario_bp = Blueprint("inventario_bp", __name__)
 
 inventario_repository = InventarioRepository()
 servicio_inventario = ServicioInventario(inventario_repository)
