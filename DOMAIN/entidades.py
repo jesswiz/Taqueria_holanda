@@ -119,7 +119,9 @@ class Inventario:
             "id_inventario": self.id_inventario,
             "id_sucursal": self.id_sucursal,
             "id_ingrediente": self.id_ingrediente,
-            "cantidad_disponible": self.cantidad_disponible
+            "cantidad_disponible": self.cantidad_disponible,
+            "movimientos": [ movimiento.convertir_a_diccionario()
+            for movimiento in self._movimientos]
         }
 
 class MovimientoInventario:
@@ -284,19 +286,7 @@ class Plato:
         self.descripcion = descripcion
         self.precio = precio
         self._receta = []
-
-        if self.id_plato is None:
-            raise ValueError("El plato debe tener un id.")
-
-        if self.nombre == "":
-            raise ValueError("El plato debe tener nombre.")
-
-        if self.descripcion == "":
-            raise ValueError("El plato debe tener descripción.")
-
-        if self.precio <= 0:
-            raise ValueError("El precio del plato debe ser mayor a cero.")
-
+        
     @property
     def receta(self):
         return tuple(self._receta)
