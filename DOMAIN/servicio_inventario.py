@@ -1,4 +1,5 @@
-from DOMAIN.entidades import EntradaInventario, SalidaInventario
+from datetime import date
+from DOMAIN.entidades import MovimientoInventario
 
 class ServicioInventario:
     def __init__(self, inventario_repository):
@@ -15,7 +16,13 @@ class ServicioInventario:
         if inventario is None:
             raise ValueError("El registro de inventario no existe.")
 
-        movimiento = EntradaInventario(cantidad, motivo)
+        movimiento = MovimientoInventario(
+            tipo_accion="entrada",
+            cantidad_movida=cantidad,
+            fecha_accion=str(date.today()),
+            motivo=motivo
+        )
+
         inventario_actualizado = movimiento.aplicar_movimiento(inventario)
 
         self.inventario_repository.actualizar(inventario_actualizado)
@@ -28,7 +35,13 @@ class ServicioInventario:
         if inventario is None:
             raise ValueError("El registro de inventario no existe.")
 
-        movimiento = SalidaInventario(cantidad, motivo)
+        movimiento = MovimientoInventario(
+            tipo_accion="salida",
+            cantidad_movida=cantidad,
+            fecha_accion=str(date.today()),
+            motivo=motivo
+        )
+
         inventario_actualizado = movimiento.aplicar_movimiento(inventario)
 
         self.inventario_repository.actualizar(inventario_actualizado)
