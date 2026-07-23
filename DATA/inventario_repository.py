@@ -32,6 +32,27 @@ class InventarioRepository:
     def obtener_por_id(self, id_inventario):
         return self.inventarios.get(id_inventario)
 
+    def obtener_por_sucursal(self, id_sucursal):
+        return [
+            inventario
+            for inventario in self.inventarios.values()
+            if inventario.id_sucursal == id_sucursal
+        ]
+    def obtener_por_sucursal_e_ingrediente(
+        self,
+        id_sucursal,
+        id_ingrediente,
+    ):
+        return next(
+            (
+                inventario
+                for inventario in self.inventarios.values()
+                if inventario.id_sucursal == id_sucursal
+                and inventario.id_ingrediente == id_ingrediente
+            ),
+            None,
+        )
+
     def actualizar(self, inventario):
         self.inventarios[inventario.id_inventario] = inventario
 inventario_repository = InventarioRepository()
