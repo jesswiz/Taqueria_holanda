@@ -34,3 +34,4 @@ class InventarioRepository:
 
     def actualizar(self, inventario):
         self.inventarios[inventario.id_inventario] = inventario
+inventario_repository = InventarioRepository()
