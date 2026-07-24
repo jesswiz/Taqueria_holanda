@@ -1,18 +1,28 @@
 from DOMAIN.entidades import Ingrediente
+from DATA.conexion import obtener_conexion
 
 class IngredienteRepository:
-    def __init__(self):
-        # Datos ficticios
-        self.ingredientes = {
-            1: Ingrediente(id_ingrediente=1, nombre="Carne al Pastor", unidad_medida="kg"),
-            2: Ingrediente(id_ingrediente=2, nombre="Tortilla de Maiz", unidad_medida="unidades"),
-            3: Ingrediente(id_ingrediente=3, nombre="Cebolla", unidad_medida="kg"),
-        }
-
+    
     def obtener_todos(self):
-        return list(self.ingredientes.values())
+        ingredientes = []
+        with obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute("SELECT id_ingrediente, nombre, unidad_medida FROM ingredientes")
+                resultados = cursor.fetchall()
+                for fila in resultados:
+                    ingredientes.append(Ingrediente(**fila))
+        return ingredientes
 
     def obtener_por_id(self, id_ingrediente):
-        return self.ingredientes.get(id_ingrediente)
+        with obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                    "SELECT id_ingrediente, nombre, unidad_medida FROM ingredientes WHERE id_ingrediente = %s", 
+                    (id_ingrediente,)
+                )
+                fila = cursor.fetchone()
+                if fila:
+                    return Ingrediente(**fila)
+        return None
 
 ingrediente_repository = IngredienteRepository()
