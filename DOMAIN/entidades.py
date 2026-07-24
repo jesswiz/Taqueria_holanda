@@ -178,11 +178,36 @@ class Inventario:
         }
 
 class MovimientoInventario:
-    def __init__(self, tipo_accion, cantidad_movida, fecha_accion, motivo):
-        self.tipo_accion = tipo_accion
+    class MovimientoInventario:
+    def __init__(
+        self,
+        tipo_accion,
+        cantidad_movida,
+        fecha_accion,
+        motivo,
+        id_inventario=None
+    ):
+        self.id_inventario = id_inventario
+
+        self.tipo_accion = (
+            tipo_accion.strip().lower()
+            if isinstance(tipo_accion, str)
+            else tipo_accion
+        )
+
         self.cantidad_movida = cantidad_movida
-        self.fecha_accion = fecha_accion
-        self.motivo = motivo
+
+        self.fecha_accion = (
+            fecha_accion.strip()
+            if isinstance(fecha_accion, str)
+            else fecha_accion
+        )
+
+        self.motivo = (
+            motivo.strip()
+            if isinstance(motivo, str)
+            else motivo
+        )
 
         self.validar_movimiento()
 
@@ -190,13 +215,26 @@ class MovimientoInventario:
         if self.tipo_accion not in ["entrada", "salida"]:
             raise ValueError("El tipo de acción debe ser entrada o salida.")
 
+        if (
+            not isinstance(self.cantidad_movida, (int, float))
+            or isinstance(self.cantidad_movida, bool)
+        ):
+            raise ValueError("La cantidad movida debe ser numérica.")
+
         if self.cantidad_movida <= 0:
             raise ValueError("La cantidad movida debe ser mayor a cero.")
 
-        if self.fecha_accion == "":
+        if not isinstance(self.fecha_accion, str) or self.fecha_accion == "":
             raise ValueError("El movimiento debe tener fecha.")
 
-        if self.motivo == "":
+        try:
+            date.fromisoformat(self.fecha_accion)
+        except ValueError as error:
+            raise ValueError(
+                "La fecha del movimiento debe tener el formato AAAA-MM-DD."
+            ) from error
+
+        if not isinstance(self.motivo, str) or self.motivo == "":
             raise ValueError("El movimiento debe tener motivo.")
 
     def aplicar_movimiento(self, inventario):
@@ -207,15 +245,21 @@ class MovimientoInventario:
             inventario.disminuir_cantidad(self.cantidad_movida)
 
         inventario.registrar_movimiento(self)
+
         return inventario
-    
+
     def convertir_a_diccionario(self):
-        return {
+        movimiento = {
             "tipo_accion": self.tipo_accion,
             "cantidad_movida": self.cantidad_movida,
             "fecha_accion": self.fecha_accion,
             "motivo": self.motivo
         }
+
+        if self.id_inventario is not None:
+            movimiento["id_inventario"] = self.id_inventario
+
+        return movimiento
     
 class DetallePedido:
     def __init__(self, id_detalle, id_ingrediente, cantidad_pedido):
