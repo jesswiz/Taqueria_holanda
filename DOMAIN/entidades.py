@@ -178,7 +178,6 @@ class Inventario:
         }
 
 class MovimientoInventario:
-    class MovimientoInventario:
     def __init__(
         self,
         tipo_accion,
